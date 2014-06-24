@@ -6,6 +6,7 @@ function main()
 	local gameScene = CCScene:create()
 	local endScene  = CCScene:create()
 
+
 	local director = CCDirector:sharedDirector()
 
 	-- local initSceneLayer = CCLayer:create()
@@ -17,7 +18,15 @@ function main()
 
 	local boardLayer = CCLayerColor:create(ccc4(255,255,255,128))
 	local boardSprit = Board()
-	
+
+	local labelScore = CCLabelAtlas:create("0", "numbers.png", 12, 32, 46);
+	labelScore:setPosition(CCPoint(director:getWinSize().width - 200, director:getWinSize().height - 100))
+	labelScore:setScale(2)
+	boardLayer:addChild(labelScore)
+
+	local function updateScore( score )
+		labelScore:setString(score)
+	end
 	scaleRate = director:getWinSize().width / boardSprit:boundingBox().size.width
 	boardSprit:setScale(scaleRate)
 	-- boardSprit:setScaleY(director:getWinSize().width / boardSprit:boundingBox().size.width)
@@ -36,7 +45,7 @@ function main()
 		if boardSprit:boundingBox():containsPoint(tp) then 
 			local relativePos = CCPoint(tp.x - director:getWinSize().width / 2 + boardSprit:boundingBox().size.width / 2, 
 				tp.y - director:getWinSize().height / 2 + boardSprit:boundingBox().size.height / 2)
-			boardSprit.touchBall(e, relativePos.x / scaleRate, relativePos.y / scaleRate)
+			boardSprit.touchBall(e, relativePos.x / scaleRate, relativePos.y / scaleRate, updateScore)
 		end
 	end)
 

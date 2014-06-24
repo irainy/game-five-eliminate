@@ -19,8 +19,8 @@ function Board( RATE )
 	self.free = {}
 	self.ballSelected = nil	-- which ball is selected
 	self.randAdded = {}
-	-- self.scored = false
 	self.scoreLines = {}
+	self.score = 0
 
 	function initContainer( )
 		for i=1,self.SIZE do
@@ -55,9 +55,10 @@ function Board( RATE )
 	end
 	function self:checkClear()
 		print(self.scoreLines)
-		if #self.scoreLines == 0 then return end
+		if #self.scoreLines == 0 then return nil end
 		for _,line in pairs(self.scoreLines) do
 			for k,v in pairs(line) do
+				self.score = self.score + #v * 20 - 50
 				for _,g in pairs(v) do
 					self:removeBall(CCPoint(g[1], g[2]))
 				end
@@ -66,7 +67,7 @@ function Board( RATE )
 		self.scoreLines = { }
 	end
 
-	function self.touchBall( e, x, y )
+	function self.touchBall( e, x, y, callback)
 		local touchPos = self:pixTopos(x, y)
 		if self:posIsFree(touchPos) then
 			if self.ballSelected ~= nil then
@@ -80,7 +81,7 @@ function Board( RATE )
 					self:occupyBall(self.ballSelected) -- occupy new position
 
 					table.insert(self.scoreLines, cll.find_line(goalPos, self.map, 5, samecolor_valid))
-					self:moveBall(self.ballSelected, goalPos, path)
+					self:moveBall(self.ballSelected, goalPos, path, callback)
 					
 					self.ballSelected = nil -- set unselected
 				end
@@ -150,15 +151,16 @@ function Board( RATE )
 		return false
 	end
 
-	function self:moveBall( ball, dest, path)
+	function self:moveBall( ball, dest, path, callback)
 		-- ball:setPosition(self:posTopix(dest.x, dest.y))
 		local pa = CCArray:create()
 		for k,v in pairs(path) do
-			local mb = CCMoveTo:create(0.03, self:posTopix(v.x, v.y))
+			local mb = CCMoveTo:create(0.2 / #path, self:posTopix(v.x, v.y))
 			pa:addObject(mb)
 		end
 		local ccl = CCCallFunc:create(function()
 			self:checkClear()
+			callback(self.score)
 		end)
 		pa:addObject(ccl)
 
