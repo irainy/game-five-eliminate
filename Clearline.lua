@@ -56,6 +56,6 @@ function find_line( pos, map, score, samecolor_valid )
 			table.insert(scoreLine, t)
 		end
 	end
-	return scoreLine
+	return #scoreLine > 0 and scoreLine or nil
 
 end

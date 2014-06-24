@@ -18,9 +18,9 @@ function Board( width, height )
 	self.map = {}
 	self.free = {}
 	self.ballSelected = nil	-- which ball is selected
-	-- self.change = {}
+	self.randAdded = {}
 	-- self.scored = false
-	self.scoreLines = nil
+	self.scoreLines = {}
 
 	function initContainer( )
 		for i=1,self.SIZE do
@@ -55,12 +55,15 @@ function Board( width, height )
 	end
 	function self:checkClear()
 		print(self.scoreLines)
-		if not self.scoreLines then return end
-		for k,v in pairs(self.scoreLines) do
-			for _,g in pairs(v) do
-				self:removeBall(CCPoint(g[1], g[2]))
+		if #self.scoreLines == 0 then return end
+		for _,line in pairs(self.scoreLines) do
+			for k,v in pairs(line) do
+				for _,g in pairs(v) do
+					self:removeBall(CCPoint(g[1], g[2]))
+				end
 			end
 		end
+		self.scoreLines = { }
 	end
 
 	local function touchBall( e, x, y )
@@ -76,7 +79,7 @@ function Board( width, height )
 					self.ballSelected.pos = goalPos -- update ball's position
 					self:occupyBall(self.ballSelected) -- occupy new position
 
-					self.scoreLines = cll.find_line(goalPos, self.map, 5, samecolor_valid)
+					table.insert(self.scoreLines, cll.find_line(goalPos, self.map, 5, samecolor_valid))
 					self:moveBall(self.ballSelected, goalPos, path)
 					
 					self.ballSelected = nil -- set unselected
@@ -99,11 +102,13 @@ function Board( width, height )
 		local pos = table.remove(self.free, randFree)
 
 		self:addBall( pos.x, pos.y, math.random(0, 4))
-		-- table.insert(self.change, pos)
+		return pos
+		-- table.insert(self.randAdded, pos)
 	end
 	function self:randAddThree()
 		for i=1,3 do
-			self:randAdd()
+			local pos = self:randAdd()
+			table.insert(self.scoreLines, cll.find_line(pos, self.map, 5, samecolor_valid))
 		end
 	end
 	function self:addBall( i, j, color)
@@ -158,11 +163,12 @@ function Board( width, height )
 		pa:addObject(ccl)
 
 		if self.scoreLines == nil then print("scorelines is nil") else print("#scorelines = ", #self.scoreLines) end
-		if self.scoreLines == nil or #self.scoreLines == 0 then
+		-- if self.scoreLines == nil or #self.scoreLines == 0 then
+		if #self.scoreLines == 0 then
 			local randomAdd = CCCallFunc:create(function() self:randAddThree() end)
 			pa:addObject(randomAdd)
 			pa:addObject(ccl)
-			self.scoreLines = nil
+			-- self.scoreLines = { }
 		end
 		-- local action = CCCardinalSplineBy:create(6, pa, 7)
 		-- local reverse = action:reverse()
@@ -170,7 +176,7 @@ function Board( width, height )
 		-- local seq    = CCSequence:create(pa)--, reverse)
 		-- ball:runAction(cb)
 		ball:runAction(seq)
-		self.scored = false
+		-- self.scored = false
 	end
 	function self:freeBall( ball )
 		self.map[ball.pos.x][ball.pos.y].ball = nil
