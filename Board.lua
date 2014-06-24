@@ -2,16 +2,16 @@ require("Astar")
 require("Ball")
 require("Clearline")
 
-function Board( width, height )
+function Board( RATE )
 	-- Size(9, 9)
 	math.randomseed(os.time())
 	-- local self = CCLayer:create()
 
 	-- init board background
-	local self = CCLayerColor:create(ccc4(255,255,255,128))
-	self.background = CCSprite:create("board.png")
-	self.background:setPosition(CCPoint(320,480))
-	self:addChild(self.background)
+	-- local self = CCLayerColor:create(ccc4(255,255,255,128))
+	self = CCSprite:create("board.png")
+	-- self:setPosition(CCPoint(320,480))
+	-- self:addChild(self.background)
 
 	-- board parameters
 	self.SIZE = 9
@@ -66,7 +66,7 @@ function Board( width, height )
 		self.scoreLines = { }
 	end
 
-	local function touchBall( e, x, y )
+	function self.touchBall( e, x, y )
 		local touchPos = self:pixTopos(x, y)
 		if self:posIsFree(touchPos) then
 			if self.ballSelected ~= nil then
@@ -93,8 +93,8 @@ function Board( width, height )
 	end
 
 	initContainer()
-	self:setTouchEnabled(true)
-	self:registerScriptTouchHandler(touchBall)
+	-- self:setTouchEnabled(true)
+	-- self:registerScriptTouchHandler(touchBall)
 
 	function self:randAdd()
 		if #self.free <= 0 then return nil end
@@ -116,14 +116,14 @@ function Board( width, height )
 		local ball = Ball(color)
 		ball.pos = CCPoint(i,j)
 		ball:setPosition(self:posTopix(i, j))
-		self.background:addChild(ball)
+		self:addChild(ball)
 
 		self:occupyBall(ball)
 	end
 	function self:removeBall( pos )
 		local ball = self.map[pos.x][pos.y].ball
 		self:freeBall(ball)
-		self.background:removeChild(ball, true)
+		self:removeChild(ball, true)
 	end
 
 	function self:moveOne( ball, dir )
@@ -182,7 +182,7 @@ function Board( width, height )
 		self.map[ball.pos.x][ball.pos.y].ball = nil
 		table.insert(self.free, 1, ball.pos)
 	end
-	function self:occupyBall( ball)
+	function self:occupyBall( ball )
 		self.map[ball.pos.x][ball.pos.y].ball = ball
 		for k,v in pairs(self.free) do
 			if self:posEqual(ball.pos, v) then
@@ -193,11 +193,14 @@ function Board( width, height )
 
 	-- position conversion functions
 	function self:posTopix(i, j)
+		-- return CCPoint((i-1) * 70 + 5, (j-1) * 70 + 5)
 		return CCPoint((i-1) * 70 + 5, (j-1) * 70 + 5)
 	end
 	function self:pixTopos(x, y)
 		local i = math.floor((x - 5) / 70 + 1)
-		local j = math.floor((y - 5 - self.background:getPosition() / 2) / 70 + 1)
+		local j = math.floor((y - 5) / 70 + 1)
+		print("touched", x, y)
+		print("pos", i, j)
 		return self.map[i][j].pos
 	end
 	function self:posEqual( p1, p2 )
