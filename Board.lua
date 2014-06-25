@@ -54,12 +54,12 @@ function Board( RATE )
 		return ball1 ~= nil and ball2 ~= nil and ball1.color == ball2.color
 	end
 	function self:checkClear()
-		print(self.scoreLines)
 		if #self.scoreLines == 0 then return nil end
 		for _,line in pairs(self.scoreLines) do
 			for k,v in pairs(line) do
 				self.score = self.score + #v * 20 - 50
 				for _,g in pairs(v) do
+					print("Clear ", g[1], g[2])
 					self:removeBall(CCPoint(g[1], g[2]))
 				end
 			end
@@ -102,7 +102,7 @@ function Board( RATE )
 		local randFree = math.random(1, #self.free)
 		local pos = table.remove(self.free, randFree)
 
-		self:addBall( pos.x, pos.y, math.random(0, 4))
+		self:addBall( pos.x, pos.y, 1)--math.random(0, 4))
 		return pos
 		-- table.insert(self.randAdded, pos)
 	end
@@ -181,8 +181,10 @@ function Board( RATE )
 		-- self.scored = false
 	end
 	function self:freeBall( ball )
-		self.map[ball.pos.x][ball.pos.y].ball = nil
-		table.insert(self.free, 1, ball.pos)
+		if ball and self.map[ball.pos.x][ball.pos.y].ball then
+			self.map[ball.pos.x][ball.pos.y].ball = nil
+			table.insert(self.free, 1, ball.pos)
+		end
 	end
 	function self:occupyBall( ball )
 		self.map[ball.pos.x][ball.pos.y].ball = ball

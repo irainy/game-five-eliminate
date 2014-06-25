@@ -41,11 +41,9 @@ function find_line( pos, map, score, samecolor_valid )
 			if samecolor_valid(start, cursor, map) then
 				len = len + 1
 				table.insert(t, cursor)
-				print("match ", len)
+				-- print("match ", len)
 			elseif len >= score then
 				print("got a line ", len)
-				-- table.insert(t, 1, start)
-				-- table.insert(scoreLine, t)
 				break
 			else
 				t, start, len = { }, cursor, 1
