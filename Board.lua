@@ -155,20 +155,28 @@ function Board( RATE )
 		-- ball:setPosition(self:posTopix(dest.x, dest.y))
 		local pa = CCArray:create()
 		for k,v in pairs(path) do
-			local mb = CCMoveTo:create(0.2 / #path, self:posTopix(v.x, v.y))
+			-- local mb = CCMoveTo:create(0.2 / #path, self:posTopix(v.x, v.y))
+			local mb = CCMoveTo:create(0.03, self:posTopix(v.x, v.y))
 			pa:addObject(mb)
 		end
 		local ccl = CCCallFunc:create(function()
 			self:checkClear()
 			callback(self.score)
 		end)
+		local delay = CCDelayTime:create(0.1)
+
+		if #self.scoreLines > 0 then
+			pa:addObject(delay)
+		end
 		pa:addObject(ccl)
 
-		if self.scoreLines == nil then print("scorelines is nil") else print("#scorelines = ", #self.scoreLines) end
+		-- if self.scoreLines == nil then print("scorelines is nil") else print("#scorelines = ", #self.scoreLines) end
 		-- if self.scoreLines == nil or #self.scoreLines == 0 then
 		if #self.scoreLines == 0 then
 			local randomAdd = CCCallFunc:create(function() self:randAddThree() end)
 			pa:addObject(randomAdd)
+
+			pa:addObject(delay)
 			pa:addObject(ccl)
 			-- self.scoreLines = { }
 		end
