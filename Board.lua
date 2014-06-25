@@ -102,7 +102,7 @@ function Board( RATE )
 		local randFree = math.random(1, #self.free)
 		local pos = table.remove(self.free, randFree)
 
-		self:addBall( pos.x, pos.y, 1)--math.random(0, 4))
+		self:addBall( pos.x, pos.y, math.random(0, 4))
 		return pos
 		-- table.insert(self.randAdded, pos)
 	end
