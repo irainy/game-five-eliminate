@@ -40,11 +40,12 @@ local function GameScene( director )
 
 	self:addChild(boardLayer)
 
-	boardLayer:setKeypadEnabled(true)
-	function boardLayer:keyBackClicked()
-		print("back pressed")
-	end
 	-- key binding
+	-- boardLayer:setKeypadEnabled(true)
+	-- boardLayer.keyBackClicked = function(self)
+	-- 	print("back pressed")
+	-- 	director:endToLua()
+	-- end
 	return self
 end
 
