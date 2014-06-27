@@ -1,20 +1,9 @@
 require("Ball")
 require("Board")
 
-function main()
-	local initScene = CCScene:create()
-	local gameScene = CCScene:create()
-	local endScene  = CCScene:create()
 
-
-	local director = CCDirector:sharedDirector()
-
-	-- local initSceneLayer = CCLayer:create()
-	-- local initSceneColorLayer = CCLayerColor:create(ccc4(128,128,128,255))
-	-- initSceneColorLayer:setPosition(CCPoint(0,0))
-	-- initScene:addChild(initSceneLayer)
-
-	-- local scale = CCSize(rate, rate)
+local function GameScene( director )
+	local self = CCScene:create()
 
 	local boardLayer = CCLayerColor:create(ccc4(255,255,255,128))
 	local boardSprit = Board()
@@ -27,17 +16,13 @@ function main()
 	local function updateScore( score )
 		labelScore:setString(score)
 	end
+
 	scaleRate = director:getWinSize().width / boardSprit:boundingBox().size.width
 	boardSprit:setScale(scaleRate)
-	-- boardSprit:setScaleY(director:getWinSize().width / boardSprit:boundingBox().size.width)
-	-- local boardLayer = Board()
-	-- local boardSprit = Board()
 
 	boardSprit:setPosition(CCPoint(director:getWinSize().width / 2, director:getWinSize().height / 2))
 	boardLayer:addChild(boardSprit)
-
 	boardLayer:setPosition(CCPoint(0, 0))
-	initScene:addChild(boardLayer)
 
 	boardLayer:setTouchEnabled(true)
 	boardLayer:registerScriptTouchHandler(function(e, x, y)
@@ -49,16 +34,29 @@ function main()
 		end
 	end)
 
-
 	for i=1,3 do
-		-- boardSprit:addBall(i, i)
 		boardSprit:randAdd()
 	end
-	-- boardSprit:move();
 
+	self:addChild(boardLayer)
+
+	boardLayer:setKeypadEnabled(true)
+	function boardLayer:keyBackClicked()
+		print("back pressed")
+	end
+	-- key binding
+	return self
+end
+
+function main()
+	local director = CCDirector:sharedDirector()
+
+	local initScene = CCScene:create()
+	local gameScene = GameScene( director )
+	local endScene  = CCScene:create()
 
 	director:setDisplayStats(false)
-	director:runWithScene(initScene)
+	director:runWithScene(gameScene)
 end
 
 
