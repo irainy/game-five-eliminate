@@ -1,0 +1,3 @@
+function WelcomeScene(  )
+	-- body
+end
