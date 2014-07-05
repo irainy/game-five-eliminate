@@ -21,7 +21,11 @@ function Board( RATE )
 	self.randAdded = {}
 	self.scoreLines = {}
 	self.score = 0
+	self.isAlive = true
 
+	function self.isGameOver(  )
+		return not self.isAlive
+	end
 	function initContainer( )
 		for i=1,self.SIZE do
 			self.map[i] = {}
@@ -161,7 +165,7 @@ function Board( RATE )
 		end
 		local ccl = CCCallFunc:create(function()
 			self:checkClear()
-			callback(self.score)
+			callback(self.score, #self.free)
 		end)
 		local delay = CCDelayTime:create(0.1)
 

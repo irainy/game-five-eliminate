@@ -25,6 +25,7 @@ function linpos( pos, size)
 end
 
 function find_line( pos, map, score, samecolor_valid )
+	if not pos then return nil end
 	local size = #map
 	local dirs = linpos( pos, size)
 	local scoreLine = {}
